@@ -1,25 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect, useRef } from "react";
+import NavBar from "./components/NavBar";
+import WelcomePage from "./components/WelcomePage";
+import ChatPage from "./components/ChatPage";
+import FormPage from "./components/FormPage";
+import styles from "./styles";
 
-function App() {
+export default function App() {
+  const [page, setPage] = useState("welcome");
+  const mainRef = useRef(null);
+
+  // Focus main content when page changes (for screen readers)
+  useEffect(() => {
+    if (mainRef.current) {
+      mainRef.current.focus();
+    }
+  }, [page]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={styles.app}>
+      {page !== "welcome" && (
+        <NavBar currentPage={page} onNavigate={setPage} />
+      )}
+      <main
+        tabIndex="-1"
+        ref={mainRef}
+        style={styles.mainContent}
+        aria-live="polite"
+      >
+        {page === "welcome" && <WelcomePage onStart={setPage} />}
+        {page === "chat" && <ChatPage />}
+        {page === "form" && <FormPage />}
+      </main>
     </div>
   );
 }
-
-export default App;
